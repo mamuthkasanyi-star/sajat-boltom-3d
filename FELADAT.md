@@ -1,7 +1,8 @@
 # FELADAT – a fejlesztőnek (Grok)
 
-**Ez nem prototípus-megrendelés.** Kiadható, teljes értékű mobiljátékot kérünk. Ne álljon meg a munka egy „alap demó”-nál.
-Minden mérföldkő végén a játék legyen futtatható, és a következő mérföldkő erre épüljön tovább. A cél a 8. pont szerinti kész játék.
+**Ez nem prototípus-megrendelés.** Egyetlen átadást fogadunk el: a teljes, hibátlan, azonnal kiadható játékot (`v1.0.0`).
+A kötelező minőségkapukat és az átadási ellenőrzést a [README.md](README.md) „A FEJLESZTŐNEK” része írja le, ezek ennek a megrendelésnek a részei.
+A mérföldkövek (6. pont) csak a belső munka sorrendjét adják, nem külön átadások. A `main` ág viszont soha nem lehet törött.
 
 ## 1. A játék
 **Többjátékos (multiplayer)** 3D bolt-menedzser és gazdasági játék a 2015-ös „Én kicsi Tescóm” mintájára, de annál jobb.
@@ -213,7 +214,7 @@ Az egyjátékos rész (4/A, offline-first) megmarad: a saját bolt offline is fu
 - Nincs reklám, nincs fizetős tartalom, nincs adatgyűjtés.
 
 ## 6. Mérföldkövek
-Mindegyik végén működő APK készüljön, és a `CHANGELOG.md` frissüljön.
+Ez a belső munka sorrendje. Minden mérföldkő végén teljesülnie kell a README minőségkapuinak, és a `CHANGELOG.md`-nek frissülnie kell. Átadás csak a teljes v1.0.0.
 1. **M1 – Alap:** projekt, CI, a PBR-anyagokkal és sütött fényekkel kész bolttér (3.1–3.2), kamera, rácsos építés, mentés.
 2. **M2 – Élet:** vevők útkereséssel, polcok és készlet, kassza, sorban állás, bevétel.
 3. **M3 – Gazdaság:** nagyker, árazás, kiadások, napi zárás, személyzet.
@@ -235,7 +236,7 @@ Mindegyik végén működő APK készüljön, és a `CHANGELOG.md` frissüljön.
 - Ne kérdezz vissza apróságokon. Haladj, és a végén foglald össze, mi készült el.
 
 ## 8. Mikor kész
-Akkor kész a játék, ha mind a hét mérföldkő teljesült, és teljesülnek ezek is:
+Akkor kész a játék, ha mind a hét mérföldkő teljesült, a README „Kötelező ellenőrzés az átadás előtt” listájának minden pontja bizonyítékkal a `docs/ATADAS.md`-ben van, és teljesülnek ezek is:
 - a CI zöld;
 - az APK telepíthető Android 8 és újabb rendszeren;
 - egy új játék oktatással indul, és legalább 10 órányi fejlődés van benne;
