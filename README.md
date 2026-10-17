@@ -2,6 +2,8 @@
 
 3D bolt-menedzser mobiljáték a 2015-ös „Én kicsi Tescóm” (My Little Tesco) mintájára, de annál jobb.
 
+**A fejlesztő először a [FELADAT.md](FELADAT.md) fájlt olvassa el – az a teljes, kötelező megrendelés.**
+
 ## Cél
 - Saját bolt felépítése és berendezése 3D-ben: polcok rácsra pakolása, áthúzása, dekoráció.
 - Árurendelés, polcfeltöltés, árazás.
