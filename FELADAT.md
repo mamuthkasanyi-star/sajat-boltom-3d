@@ -4,8 +4,8 @@
 Minden mérföldkő végén a játék legyen futtatható, és a következő mérföldkő erre épüljön tovább. A cél a 8. pont szerinti kész játék.
 
 ## 1. A játék
-3D bolt-menedzser játék a 2015-ös „Én kicsi Tescóm” mintájára, de annál jobb.
-A játékos egy üres üzlethelyiségből indul, és nagy, sikeres áruházat épít belőle.
+**Többjátékos (multiplayer)** 3D bolt-menedzser és gazdasági játék a 2015-ös „Én kicsi Tescóm” mintájára, de annál jobb.
+A játékos egy üres üzlethelyiségből indul, és nagy, sikeres áruházat vagy áruházláncot épít belőle, miközben a többi játékossal kereskedik a közös piacon (lásd 4/B).
 - Motor: **Godot 4.4+**, GDScript.
 - Platform: **Android** (arm64 APK, Gradle export, minimum Android 8), másodlagos platform a **Linux x86_64**.
 - Nyelv: **magyar** (minden szöveg a `.po`/CSV fordítási fájlban, hogy később angol is jöhessen).
@@ -131,6 +131,81 @@ A kliensoldalt viszont már most úgy kell megírni, hogy a szerver elkészülte
 - **Adatvédelem:** csak a játékhoz szükséges adat (azonosító, boltnév, mentés, eredmény) mehet fel. Nincs reklám-azonosító, nincs helyadat.
 - **Kapcsolat a „Biztonság” ponttal:** a szerver jelszava, tokenje vagy adatbázis-elérése **soha** nem kerülhet ebbe a nyilvános repóba.
 
+## 4/B. MULTIPLAYER – játékosok közötti kereskedelem és piac (kötelező, a játék magja)
+A játék **többjátékos gazdasági játék**. A játékosok boltjai egy közös világban, közös városokban működnek, és egymással kereskednek, versenyeznek, együttműködnek.
+Az egyjátékos rész (4/A, offline-first) megmarad: a saját bolt offline is fut. A piac, a kereskedés és a közös világ viszont csak online működik.
+
+### 4/B.1 Közös világ
+- **Városok:** a világ városokból (szerverszobákból) áll, városonként legfeljebb 50 játékossal.
+  - A térképen látszanak a többiek boltjai, és bármelyikbe be lehet lépni, hogy élőben lásd, mi zajlik bent: vevők, polcok, árak (csak megtekintés).
+  - A városnak közös vásárlóköre van, a vevők a boltok között **választanak** az ár, a választék, a hírnév és a távolság alapján.
+- **Szerepek és specializáció:** a játékos a kiskereskedelem mellett más ágba is beléphet, és ezzel ellátási láncok jönnek létre:
+  - **termelő:** farm, pékség, tejüzem, üdítőgyár;
+  - **nagykereskedő:** raktár, teherautók;
+  - **kiskereskedő:** bolt, áruház.
+  - A termelők gyártási sorral, nyersanyaggal és gyártási idővel dolgoznak.
+  - A boltok tőlük, vagy a drágább, NPC-s „állami nagykerből” szerezhetik be az árut.
+- **Logisztika:**
+  - a játékosok közötti szállítás időbe és pénzbe kerül, és a távolságtól függ;
+  - a teherautókat fejleszteni lehet;
+  - a szállítás útja látszik a térképen.
+
+### 4/B.2 Piac (tőzsde-jellegű árupiac)
+- **Termékenkénti ajánlati könyv (order book):** vételi és eladási limitajánlatok, azonnali piaci vétel és eladás.
+  - Az ajánlatok párosítását a szerver végzi.
+  - Látszik a legjobb vételi és eladási ár, a mélység és az utolsó kötések.
+- **Ártörténet:** grafikonok órás, napi és heti bontásban (gyertyadiagram és forgalom), városi és országos átlagárral.
+- **Díjak:** piaci díj és szállítási költség, hogy a spekuláció ne legyen ingyenes.
+- **Romlandóság:** a friss áru a piacon is romlik, ezért lejárat közeli árut csak kedvezménnyel lehet eladni.
+- **Árverés:** ritka berendezések, prémium üzlethelyiségek és felszámolt boltok készlete licitálható, időkorláttal.
+
+### 4/B.3 Közvetlen üzletelés
+- **Ajánlat két játékos között:** áru, pénz és berendezés cseréje egy ajánlat–ellenajánlat–elfogadás folyamatban.
+  - Letét (escrow): mindkét fél tétje zárolódik, és csak a teljes elfogadáskor cserél gazdát.
+  - Csalni ezért nem lehet.
+- **Szállítási szerződés:** például „heti 500 kenyér, 180 Ft/db, 4 hétig”.
+  - Automatikus teljesítés és fizetés.
+  - Kötbér nem teljesítéskor.
+  - A szerződések listája és állapota mindig látható.
+- **Kölcsön és befektetés:** játékosok közötti kölcsön kamattal, valamint tőkebevonás egy másik játékos vállalkozásába, részesedésért.
+
+### 4/B.4 Közösség
+- **Láncok (céhek):** több játékos közös márkanévvel üzemel, közös kassza, közös raktár, belső kedvezményes árak és rangok.
+- **Chat:** városi, lánc- és privát chat, alap trágárságszűréssel, jelentés és némítás.
+- **Verseny:**
+  - heti ranglisták városonként és országosan;
+  - szezonok (például 4 hetes ciklus) jutalommal;
+  - városi közös célok (például „A város karácsonyi forgalma 1 millió Ft”).
+- **Hírnév:** a vevői elégedettség, a teljesített szerződések és az értékelések együtt adják. Ettől függ, kik akarnak üzletelni a játékossal.
+
+### 4/B.5 Technika (szerver-hiteles gazdaság)
+- **A szerver a hiteles forrás** minden közös adatban: pénz, készlet, piac, szerződés, kötés.
+  - A kliens csak kéréseket küld, és megjeleníti az eredményt.
+  - A kliens soha nem dönthet pénzről vagy készletről a közös rendszerben.
+- **Saját bolt és piac kapcsolata:**
+  - a saját bolt helyi szimulációja offline is fut;
+  - online szinkronkor a szerver ellenőrzi és elfogadja az eredményt (értékhatárok és időarányos plauzibilitás alapján);
+  - piaci műveletet csak online, szinkron állapotban lehet végezni.
+- **Valós idejű csatorna:** WebSocket (`wss://bigbossfm.hu/VALAMI/ws`) a piaci árfolyamhoz, a chathez, az ajánlatokhoz és a városi eseményekhez.
+  - Kapcsolatvesztéskor automatikus újracsatlakozás.
+  - Ami a kapcsolat szünetelése alatt történt, az utólag pótlódik.
+- **Tranzakciók:**
+  - minden pénz- és készletmozgás atomi és naplózott (főkönyv);
+  - ismételt kérés ne könyvelődhessen kétszer (idempotencia-kulcs);
+  - piaci kötés és letét adatbázis-tranzakcióban.
+- **Visszaélés ellen:**
+  - sebességkorlát (rate limit) végpontonként;
+  - gyanús kereskedési minták jelzése (például két fiók közti egyirányú, piaci ár alatti pénzmozgatás);
+  - admin-napló.
+- **Referencia-szerver – ezt is a fejlesztő írja meg, a `server/` mappába:**
+  - Python 3.12, SQLite, `aiohttp` (vagy `websockets`), `requirements.txt`, migrációk;
+  - a 4/A és 4/B összes végpontja és WebSocket-üzenete;
+  - indítható legyen egy paranccsal (`python -m server`), mert ezt fogja a megrendelő a bigbossfm.hu-n üzemeltetni;
+  - legyenek hozzá automata tesztek: piaci párosítás, letét, szerződés-teljesítés, idempotencia, versenyhelyzetek;
+  - legyen hozzá **terheléses teszt** 200 szimulált klienssel;
+  - a konfiguráció (adatbázis útvonala, titkos kulcs) környezeti változóból jöjjön, a repóba csak `config.example` kerülhet.
+- **Dokumentáció:** a `docs/api.md` a REST végpontokat és a WebSocket-üzeneteket is írja le.
+
 ## 5. Biztonság és jog
 - A repó **nyilvános**. Aláírókulcs, jelszó, token és API-kulcs **soha** nem kerülhet bele.
   A kiadási aláírás csak GitHub Secretből történhet.
@@ -142,9 +217,17 @@ Mindegyik végén működő APK készüljön, és a `CHANGELOG.md` frissüljön.
 1. **M1 – Alap:** projekt, CI, a PBR-anyagokkal és sütött fényekkel kész bolttér (3.1–3.2), kamera, rácsos építés, mentés.
 2. **M2 – Élet:** vevők útkereséssel, polcok és készlet, kassza, sorban állás, bevétel.
 3. **M3 – Gazdaság:** nagyker, árazás, kiadások, napi zárás, személyzet.
-4. **M4 – Fejlődés és online:** a 4/A pont kliensoldala a teszt-szerverrel, szintek, feloldások, bővítés, feladatok, offline haladás.
-5. **M5 – Csiszolás:** a 3.5 pont szerinti grafikai elfogadás, hangok, effektek, oktató rész az elején, beállítások, teljesítmény-optimalizálás.
-6. **M6 – Kiadás:** ünnepek, eredmények, egyensúlyozás, hibajavítás, aláírt kiadási APK.
+4. **M4 – Fejlődés és online alap:** szintek, feloldások, bővítés, feladatok, offline haladás.
+   A 4/A pont teljes egészében (kliens és referencia-szerver), fiókkezelés, felhőmentés, ranglista.
+5. **M5 – Multiplayer gazdaság:** a 4/B pont teljes egészében:
+   - közös városok, a többiek boltjainak megtekintése, közös vásárlókör;
+   - termelő és nagykereskedő szerep, logisztika;
+   - piac ajánlati könyvvel és ártörténettel, árverés;
+   - közvetlen üzlet letéttel, szerződések, kölcsön;
+   - láncok, chat, szezonok;
+   - a szerver tesztjei és a 200 klienses terheléses teszt zöld.
+6. **M6 – Csiszolás:** a 3.5 pont szerinti grafikai elfogadás, hangok, effektek, oktató rész az elején (a piac és az üzletelés tanítása is), beállítások, teljesítmény-optimalizálás.
+7. **M7 – Kiadás:** ünnepek, eredmények, a gazdaság egyensúlyozása (szimulációval: például 100 bot-játékos 30 napon át, infláció és monopólium figyelése), hibajavítás, aláírt kiadási APK.
 
 ## 7. Hogyan dolgozz
 - A munkát a `main` ágon, vagy mérföldkövenként PR-ban add le.
@@ -152,9 +235,11 @@ Mindegyik végén működő APK készüljön, és a `CHANGELOG.md` frissüljön.
 - Ne kérdezz vissza apróságokon. Haladj, és a végén foglald össze, mi készült el.
 
 ## 8. Mikor kész
-Akkor kész a játék, ha mind a hat mérföldkő teljesült, és teljesülnek ezek is:
+Akkor kész a játék, ha mind a hét mérföldkő teljesült, és teljesülnek ezek is:
 - a CI zöld;
 - az APK telepíthető Android 8 és újabb rendszeren;
 - egy új játék oktatással indul, és legalább 10 órányi fejlődés van benne;
 - a mentés két verzió között is működik;
+- legalább 2 telefonon és 1 PC-n egyszerre játszva a piac, a közvetlen üzlet és a chat hibátlanul működik;
+- a referencia-szerver egy paranccsal indul, és a tesztjei zöldek;
 - nincs ismert összeomlás.
