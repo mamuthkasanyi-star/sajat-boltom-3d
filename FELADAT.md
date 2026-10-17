@@ -100,7 +100,8 @@ Csak **CC0** vagy saját készítésű asset használható. Minden asset forrás
 - Commitonként egy logikai változás, magyar commitüzenettel. Kis lépések, minden lépés után működő állapot.
 
 ## 4/A. Szerverkapcsolat (online funkciók)
-A szervert a megrendelő készíti el **https://bigbossfm.hu/VALAMI** alatt. A végleges útvonal később derül ki.
+A játék szervere **a megrendelő saját Samsung Galaxy A51 telefonján fut**, és a **https://bigbossfm.hu/VALAMI** címen érhető el egy Cloudflare-alagúton (cloudflared tunnel) keresztül. A végleges útvonal később derül ki.
+A szerver üzemeltetését (telepítés, alagút, domain) a megrendelő végzi. A fejlesztő dolga a szerver kódja, a telepítési leírás és a systemd unit-sablon. Titok vagy alagút-azonosító nem kerülhet a repóba.
 A kliensoldalt viszont már most úgy kell megírni, hogy a szerver elkészültekor csak a címet kelljen beírni.
 
 - **A szerver címe** egyetlen helyen legyen, a `data/szerver.json`-ban (`"base_url": "https://bigbossfm.hu/VALAMI/api/v1"`), és ne a kódba égetve.
@@ -201,9 +202,19 @@ Az egyjátékos rész (4/A, offline-first) megmarad: a saját bolt offline is fu
 - **Referencia-szerver – ezt is a fejlesztő írja meg, a `server/` mappába:**
   - Python 3.12, SQLite, `aiohttp` (vagy `websockets`), `requirements.txt`, migrációk;
   - a 4/A és 4/B összes végpontja és WebSocket-üzenete;
-  - indítható legyen egy paranccsal (`python -m server`), mert ezt fogja a megrendelő a bigbossfm.hu-n üzemeltetni;
+  - indítható legyen egy paranccsal (`python -m server`), mert ezt fogja a megrendelő üzemeltetni;
+  - **célhardver, ehhez kell méretezni:**
+    - Samsung Galaxy A51: Exynos 9611, 8 mag (4× A73 2,3 GHz + 4× A53 1,7 GHz), kb. 4 GB RAM, eMMC-tár;
+    - Ubuntu 24.04 aarch64 (Mamuthka linux), Python 3.12, systemd;
+    - a telefonon más szolgáltatások is futnak, ezért a játékszerver erőforrás-kerete: **≤ 300 MB RAM, átlagosan ≤ 25% CPU 200 kliensnél**;
+  - csak aarch64-en is gond nélkül telepíthető, tiszta Python vagy előre fordított aarch64-es wheel-lel rendelkező függőség használható;
+  - SQLite WAL módban, kevés lemezírással (az eMMC kímélése: kötegelt írás, nincs másodpercenkénti teljes mentés);
+  - a szerver a localhost egy portján hallgat (alapból 127.0.0.1:8795, környezeti változóval állítható), a kívülről jövő forgalom a Cloudflare-alagúton át érkezik. A valódi kliens-IP-t a `CF-Connecting-IP` fejlécből olvassa, a rate limit is erre épül;
+  - REST és WebSocket ugyanazon a porton, `/VALAMI` előtaggal, ami konfigurálható (`BASE_PATH`);
+  - mellékelve: `deploy/mamuthka-jatekszerver.service` (systemd unit-sablon, User=mamuthka, Restart=on-failure, MemoryMax=400M), `deploy/TELEPITES.md` (lépésről lépésre a telefonra), és napi automatikus adatbázis-mentés rotációval;
+  - a frissítés adatvesztés nélkül menjen: verziózott adatbázis-migrációk, indulás előtti automatikus mentés;
   - legyenek hozzá automata tesztek: piaci párosítás, letét, szerződés-teljesítés, idempotencia, versenyhelyzetek;
-  - legyen hozzá **terheléses teszt** 200 szimulált klienssel;
+  - legyen hozzá **terheléses teszt** 200 szimulált klienssel. Az eredményt a célhardveren vagy azzal egyenértékű aarch64 / 4 GB-os környezetben kell mérni (például QEMU vagy egy ARM-es CI-futtató), és a `docs/teljesitmeny.md`-be kell írni;
   - a konfiguráció (adatbázis útvonala, titkos kulcs) környezeti változóból jöjjön, a repóba csak `config.example` kerülhet.
 - **Dokumentáció:** a `docs/api.md` a REST végpontokat és a WebSocket-üzeneteket is írja le.
 

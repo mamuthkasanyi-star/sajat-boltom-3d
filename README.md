@@ -82,7 +82,7 @@ Javítási kör, „majd a következő verzióban” vagy „ez csak alap” nem
 - Motor: Godot 4.4+ (GDScript, statikus típusokkal).
 - Platform: Android (aláírt APK, Gradle export), Linux.
 - Grafika: valósághű, PBR-anyagos 3D, sütött fényekkel (lásd FELADAT.md 3. pont).
-- Szerver: Python 3.12 referencia-szerver a `server/` mappában (lásd FELADAT.md 4/B.5).
+- Szerver: Python 3.12 a `server/` mappában. A megrendelő Galaxy A51 telefonján fut (aarch64, kb. 4 GB RAM), és Cloudflare-alagúton át a bigbossfm.hu-n érhető el. Ehhez a hardverhez kell méretezni (FELADAT.md 4/A, 4/B.5).
 - Csak CC0 vagy saját asset (Poly Haven, ambientCG, Quaternius), a forrásuk a `CREDITS.md`-ben.
 
 ## Szabályok
