@@ -1,0 +1,15 @@
+# Godot 4
+.godot/
+/android/
+*.import.bak
+export_presets.cfg.bak
+# Build
+build/
+*.apk
+*.aab
+*.x86_64
+# Kulcsok, titkok – SOHA ne kerüljenek a repóba
+*.keystore
+*.jks
+keystore.properties
+.env
