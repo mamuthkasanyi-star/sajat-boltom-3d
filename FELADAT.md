@@ -98,6 +98,39 @@ Csak **CC0** vagy saját készítésű asset használható. Minden asset forrás
 - **GitHub Actions:** minden pushra fusson le a tesztek, és készüljön Linux build, valamint egy debug Android APK artefakt.
 - Commitonként egy logikai változás, magyar commitüzenettel. Kis lépések, minden lépés után működő állapot.
 
+## 4/A. Szerverkapcsolat (online funkciók)
+A szervert a megrendelő készíti el **https://bigbossfm.hu/VALAMI** alatt. A végleges útvonal később derül ki.
+A kliensoldalt viszont már most úgy kell megírni, hogy a szerver elkészültekor csak a címet kelljen beírni.
+
+- **A szerver címe** egyetlen helyen legyen, a `data/szerver.json`-ban (`"base_url": "https://bigbossfm.hu/VALAMI/api/v1"`), és ne a kódba égetve.
+  Debug buildben a játék beállításaiban át is lehessen írni.
+- **Offline-first működés:**
+  - a játék szerver nélkül is teljes értékű, a mentés helyben van;
+  - az online rész csak kiegészítés;
+  - ha nincs kapcsolat, nem lehet hibaüzenet-áradat és várakozás, csak egy kis „offline” jelzés.
+- **Kapcsolat:**
+  - csak HTTPS, JSON REST, Godot `HTTPRequest`;
+  - időkorlát 10 s, újrapróbálás exponenciális várakozással;
+  - a küldendő adatok sorba kerülnek, és az újra-online állapotban mennek el.
+- **Azonosítás:**
+  - első indításkor a kliens véletlen játékos-azonosítót (UUID) és helyi titkot generál (`POST /jatekos`);
+  - a szerver tokent ad vissza, ami a felhasználói adatkönyvtárban tárolódik;
+  - a kliensben **nem lehet beépített API-kulcs vagy jelszó**, mert az APK visszafejthető.
+- **Funkciók:** a kliensoldal az M4 mérföldkőben készüljön el, kikapcsolható módon.
+  1. **Felhőmentés:** mentés fel- és letöltése (`PUT/GET /mentes`), ütközéskor választás a helyi és a felhős mentés között.
+  2. **Ranglista:** napi bevétel, boltméret és szint szerint (`GET /ranglista?tipus=...`, `POST /eredmeny`).
+  3. **Barátok:** barátkód, a barát boltjának megtekintése csak olvashatóan, a mentés-pillanatképe alapján.
+     Napi ajándék a barátoknak, segítségkérés (például gyorsabb szállítás).
+  4. **Közös események:** szerverről letöltött hetiesemény-leírás (`GET /esemenyek`): kiemelt termék, szezonális akció, közös cél.
+  5. **Hírek és üzenetek:** a játékon belül megjelenő hírek (`GET /hirek`).
+- **API-leírás:** a fejlesztő írja meg a `docs/api.md`-ben (OpenAPI-szerű) a kliens által elvárt összes végpontot, kérés- és válaszformátummal, hibakódokkal.
+  Készítsen hozzá egy **helyi teszt-szervert** is (`tools/teszt_szerver.py`, csak Python stdlib), hogy a kliens szerver nélkül is tesztelhető legyen.
+- **Csalás elleni minimum:**
+  - a beküldött eredmény mellé kerüljön a mentés-statisztika;
+  - a kliens ne küldjön lehetetlen értéket, mert a végső ellenőrzés a szerveré.
+- **Adatvédelem:** csak a játékhoz szükséges adat (azonosító, boltnév, mentés, eredmény) mehet fel. Nincs reklám-azonosító, nincs helyadat.
+- **Kapcsolat a „Biztonság” ponttal:** a szerver jelszava, tokenje vagy adatbázis-elérése **soha** nem kerülhet ebbe a nyilvános repóba.
+
 ## 5. Biztonság és jog
 - A repó **nyilvános**. Aláírókulcs, jelszó, token és API-kulcs **soha** nem kerülhet bele.
   A kiadási aláírás csak GitHub Secretből történhet.
@@ -109,7 +142,7 @@ Mindegyik végén működő APK készüljön, és a `CHANGELOG.md` frissüljön.
 1. **M1 – Alap:** projekt, CI, a PBR-anyagokkal és sütött fényekkel kész bolttér (3.1–3.2), kamera, rácsos építés, mentés.
 2. **M2 – Élet:** vevők útkereséssel, polcok és készlet, kassza, sorban állás, bevétel.
 3. **M3 – Gazdaság:** nagyker, árazás, kiadások, napi zárás, személyzet.
-4. **M4 – Fejlődés:** szintek, feloldások, bővítés, feladatok, offline haladás.
+4. **M4 – Fejlődés és online:** a 4/A pont kliensoldala a teszt-szerverrel, szintek, feloldások, bővítés, feladatok, offline haladás.
 5. **M5 – Csiszolás:** a 3.5 pont szerinti grafikai elfogadás, hangok, effektek, oktató rész az elején, beállítások, teljesítmény-optimalizálás.
 6. **M6 – Kiadás:** ünnepek, eredmények, egyensúlyozás, hibajavítás, aláírt kiadási APK.
 

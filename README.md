@@ -9,7 +9,7 @@
 - Árurendelés, polcfeltöltés, árazás.
 - Sétáló vevők útkereséssel, kosár, sorban állás, kasszák.
 - Forgatható, nagyítható kamera.
-- Offline is játszható, a barátos funkciók később.
+- Offline is teljes értékű; online rész (felhőmentés, ranglista, barátok) a bigbossfm.hu szerverrel – lásd FELADAT.md 4/A.
 - Magyar felület.
 
 ## Technika
