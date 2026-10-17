@@ -15,7 +15,8 @@
 ## Technika
 - Motor: Godot 4 (GDScript).
 - Platform: Android (APK, Gradle export), Linux.
-- Csak szabadon használható (CC0) modellek, például Kenney.
+- Grafika: valósághű, PBR-anyagos 3D, sütött fényekkel (lásd FELADAT.md 3. pont).
+- Csak CC0 vagy saját asset (Poly Haven, ambientCG, Quaternius).
 
 ## Szabályok
 - Tesco- vagy más védjegyes név, logó, arculat nem használható.
