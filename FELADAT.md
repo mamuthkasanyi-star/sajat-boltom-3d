@@ -5,6 +5,8 @@ A kötelező minőségkapukat és az átadási ellenőrzést a [README.md](READM
 A mérföldkövek (6. pont) csak a belső munka sorrendjét adják, nem külön átadások. A `main` ág viszont soha nem lehet törött.
 
 ## 1. A játék
+**A játék neve: FreshMarket.** Ez az app neve, az ikon felirata, a csomagnév alapja (`hu.bigbossfm.freshmarket`) és a szerver útvonala (`https://bigbossfm.hu/freshmarket`).
+A logót és az arculatot a fejlesztő saját, eredeti tervként készíti el, valós áruházlánc arculatára nem hasonlíthat.
 **Többjátékos (multiplayer)** 3D bolt-menedzser és gazdasági játék a 2015-ös „Én kicsi Tescóm” mintájára, de annál jobb.
 A játékos egy üres üzlethelyiségből indul, és nagy, sikeres áruházat vagy áruházláncot épít belőle, miközben a többi játékossal kereskedik a közös piacon (lásd 4/B).
 - Motor: **Godot 4.4+**, GDScript.
@@ -100,11 +102,11 @@ Csak **CC0** vagy saját készítésű asset használható. Minden asset forrás
 - Commitonként egy logikai változás, magyar commitüzenettel. Kis lépések, minden lépés után működő állapot.
 
 ## 4/A. Szerverkapcsolat (online funkciók)
-A játék szervere **a megrendelő saját Samsung Galaxy A51 telefonján fut**, és a **https://bigbossfm.hu/VALAMI** címen érhető el egy Cloudflare-alagúton (cloudflared tunnel) keresztül. A végleges útvonal később derül ki.
+A játék szervere **a megrendelő saját Samsung Galaxy A51 telefonján fut**, és a **https://bigbossfm.hu/freshmarket** címen érhető el egy Cloudflare-alagúton (cloudflared tunnel) keresztül.
 A szerver üzemeltetését (telepítés, alagút, domain) a megrendelő végzi. A fejlesztő dolga a szerver kódja, a telepítési leírás és a systemd unit-sablon. Titok vagy alagút-azonosító nem kerülhet a repóba.
 A kliensoldalt viszont már most úgy kell megírni, hogy a szerver elkészültekor csak a címet kelljen beírni.
 
-- **A szerver címe** egyetlen helyen legyen, a `data/szerver.json`-ban (`"base_url": "https://bigbossfm.hu/VALAMI/api/v1"`), és ne a kódba égetve.
+- **A szerver címe** egyetlen helyen legyen, a `data/szerver.json`-ban (`"base_url": "https://bigbossfm.hu/freshmarket/api/v1"`), és ne a kódba égetve.
   Debug buildben a játék beállításaiban át is lehessen írni.
 - **Offline-first működés:**
   - a játék szerver nélkül is teljes értékű, a mentés helyben van;
@@ -188,7 +190,7 @@ Az egyjátékos rész (4/A, offline-first) megmarad: a saját bolt offline is fu
   - a saját bolt helyi szimulációja offline is fut;
   - online szinkronkor a szerver ellenőrzi és elfogadja az eredményt (értékhatárok és időarányos plauzibilitás alapján);
   - piaci műveletet csak online, szinkron állapotban lehet végezni.
-- **Valós idejű csatorna:** WebSocket (`wss://bigbossfm.hu/VALAMI/ws`) a piaci árfolyamhoz, a chathez, az ajánlatokhoz és a városi eseményekhez.
+- **Valós idejű csatorna:** WebSocket (`wss://bigbossfm.hu/freshmarket/ws`) a piaci árfolyamhoz, a chathez, az ajánlatokhoz és a városi eseményekhez.
   - Kapcsolatvesztéskor automatikus újracsatlakozás.
   - Ami a kapcsolat szünetelése alatt történt, az utólag pótlódik.
 - **Tranzakciók:**
@@ -210,7 +212,7 @@ Az egyjátékos rész (4/A, offline-first) megmarad: a saját bolt offline is fu
   - csak aarch64-en is gond nélkül telepíthető, tiszta Python vagy előre fordított aarch64-es wheel-lel rendelkező függőség használható;
   - SQLite WAL módban, kevés lemezírással (az eMMC kímélése: kötegelt írás, nincs másodpercenkénti teljes mentés);
   - a szerver a localhost egy portján hallgat (alapból 127.0.0.1:8795, környezeti változóval állítható), a kívülről jövő forgalom a Cloudflare-alagúton át érkezik. A valódi kliens-IP-t a `CF-Connecting-IP` fejlécből olvassa, a rate limit is erre épül;
-  - REST és WebSocket ugyanazon a porton, `/VALAMI` előtaggal, ami konfigurálható (`BASE_PATH`);
+  - REST és WebSocket ugyanazon a porton, `/freshmarket` előtaggal, ami konfigurálható (`BASE_PATH`);
   - mellékelve: `deploy/mamuthka-jatekszerver.service` (systemd unit-sablon, User=mamuthka, Restart=on-failure, MemoryMax=400M), `deploy/TELEPITES.md` (lépésről lépésre a telefonra), és napi automatikus adatbázis-mentés rotációval;
   - a frissítés adatvesztés nélkül menjen: verziózott adatbázis-migrációk, indulás előtti automatikus mentés;
   - legyenek hozzá automata tesztek: piaci párosítás, letét, szerződés-teljesítés, idempotencia, versenyhelyzetek;

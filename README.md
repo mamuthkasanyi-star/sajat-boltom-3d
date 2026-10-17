@@ -1,4 +1,4 @@
-# Saját Boltom 3D (munkanév)
+# FreshMarket
 
 **Többjátékos** 3D bolt-menedzser és gazdasági mobiljáték a 2015-ös „Én kicsi Tescóm” (My Little Tesco) mintájára, de annál jobb.
 
